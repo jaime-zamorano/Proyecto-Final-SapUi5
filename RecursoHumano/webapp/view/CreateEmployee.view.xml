@@ -79,7 +79,7 @@
 													activate="optionalStepActivation"
 													title="{i18n>infoAdicional}">
 											<MessageStrip class="sapUiSmallMarginBottom"
-													text="{i18n>step3ms}"
+													text="{i18n>step3message}"
 													showIcon="true"/>
 											<Label text="{i18n>comentario}" width="100%"></Label>
 											<TextArea value="{/Comments}" width="100%"></TextArea>

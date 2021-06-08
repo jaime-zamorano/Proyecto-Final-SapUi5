@@ -91,21 +91,47 @@ sap.ui.define([
     var Fn = {
         // Valida el rut con su cadena completa "XXXXXXXX-X"
         validaRut: function (rutCompleto) {
-            rutCompleto = rutCompleto.replace("‐", "-");
-            if (!/^[0-9]+[-|‐]{1}[0-9kK]{1}$/.test(rutCompleto))
-                return false;
-            var tmp = rutCompleto.split('-');
-            var digv = tmp[1];
-            var rut = tmp[0];
-            if (digv == 'K') digv = 'k';
+            //        rutCompleto = rutCompleto.replace("‐", "-");
+            //        if (!/^[0-9]+[-|‐]{1}[0-9kK]{1}$/.test(rutCompleto))
+            //            return false;
+            //        var tmp = rutCompleto.split('-');
+            //        var digv = tmp[1];
+            //        var rut = tmp[0];
+            //       if (digv == 'K') digv = 'k';
 
-            return (Fn.dv(rut) == digv);
-        },
-        dv: function (T) {
-            var M = 0, S = 1;
-            for (; T; T = Math.floor(T / 10))
-                S = (S + T % 10 * (9 - M++ % 6)) % 11;
-            return S ? S - 1 : 'k';
+            //        return (Fn.dv(rut) == digv);
+            //    },
+            //    dv: function (T) {
+            //        var M = 0, S = 1;
+            //        for (; T; T = Math.floor(T / 10))
+            //            S = (S + T % 10 * (9 - M++ % 6)) % 11;
+            //        return S ? S - 1 : 'k';
+            //    }
+            var respuesta = false;
+            var number;
+            var letter;
+            var letterList;
+            var regularExp = /^\d{8}[a-zA-Z]$/;
+
+            if (regularExp.test(rutCompleto) === true) {
+                //Número
+                number = rutCompleto.substr(0, rutCompleto.length - 1);
+                //Letra
+                letter = rutCompleto.substr(rutCompleto.length - 1, 1);
+                number = number % 23;
+                letterList = "TRWAGMYFPDXBNJZSQVHLCKET";
+                letterList = letterList.substring(number, number + 1);
+                if (letterList !== letter.toUpperCase()) {
+                    respuesta = false;
+                } else {
+                    respuesta = true;
+                }
+            } else {
+                respuesta = false;
+            }
+
+
+
         }
     }
 
