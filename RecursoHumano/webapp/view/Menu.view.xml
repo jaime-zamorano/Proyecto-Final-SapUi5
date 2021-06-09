@@ -14,7 +14,7 @@
 							</GenericTile>
 						</Panel>
 						<Panel headerText="{i18n>pedidos}"  expandable="true" expanded="true">
-							<GenericTile id="linkFirmarPedido"  headerImage="sap-icon://signature" class="sapUiTinyMarginBegin sapUiTinyMarginTop" url="www.google.cl">
+							<GenericTile id="linkFirmarPedido"  headerImage="sap-icon://signature" class="sapUiTinyMarginBegin sapUiTinyMarginTop" press="navEmployeeIndex">
 								<TileContent footer="{i18n>firmarPedido}">
 								</TileContent>
 							</GenericTile>
