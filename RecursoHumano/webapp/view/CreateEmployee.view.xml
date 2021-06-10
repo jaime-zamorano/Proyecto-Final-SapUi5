@@ -7,7 +7,7 @@
 							<Page	showHeader="false">
 								<content>
 									<Wizard id="wizard" complete="wizardCompletedHandler">
-										<WizardStep id="typeEmployeeStep" title="{i18n>tipoEmpleado}"
+										<WizardStep id="employeeSteptype" title="{i18n>tipoEmpleado}"
 													validated="false">
 											<MessageStrip class="sapUiSmallMarginBottom"
 													text="{i18n>stepmessage}"
@@ -30,7 +30,7 @@
 												</Button>
 											</FlexBox>
 										</WizardStep>
-										<WizardStep id="dataEmployeeStep"
+										<WizardStep id="datosEmployeeStep"
 													validated="false"
 													title="{i18n>datosEmpleado}">
 											<MessageStrip class="sapUiSmallMarginBottom"
@@ -105,8 +105,8 @@
 									</OverflowToolbar>
 								</footer>
 							</Page>
-							<Page id="ReviewPage" title="{i18n>resumen}">
-								<core:Fragment fragmentName="Empleados.RecursoHumano.fragment.ReviewPage" type="XML"/>
+							<Page id="RevisionPage" title="{i18n>resumen}">
+								<core:Fragment fragmentName="Empleados.RecursoHumano.fragment.RevisionPage" type="XML"/>
 								<footer>
 									<Toolbar>
 										<ToolbarSpacer></ToolbarSpacer>

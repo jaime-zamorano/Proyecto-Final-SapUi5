@@ -4,38 +4,32 @@ sap.ui.define([
     "sap/m/UploadCollectionParameter"
 ], function (Controller, MessageBox, UploadCollectionParameter) {
     "use strict";
-
+    //se crea modelo principal, parte desde el step 0 y se invalida el first step 
     function onBeforeRendering() {
         this._wizard = this.byId("wizard");
-        //Se crea el modelo principal que contendrá todos los datos
+
         this._model = new sap.ui.model.json.JSONModel({});
         this.getView().setModel(this._model);
-        //Se reseta los pasos por si ya se ha ejecutado la aplicacion antes
+      
         var oFirstStep = this._wizard.getSteps()[0];
-        this._wizard.discardProgress(oFirstStep);
-        // scroll to top
-        this._wizard.goToStep(oFirstStep);
-        // invalidate first step
+        this._wizard.discardProgress(oFirstStep);   
+        this._wizard.goToStep(oFirstStep);     
         oFirstStep.setValidated(false);
-        //
+        
     }
 
-    //Función al pulsar sobre el tipo de empleado
-    //Se activa el paso 2
+    //Funcion que se utiliza cada vez que se pulsa los tipo de empleados
     function toStepButton(oEvent) {
         //Step 1
-        var dataEmployeeStep = this.byId("dataEmployeeStep");
+        var datosEmployeeStep = this.byId("datosEmployeeStep");
         //Step 2
-        var typeEmployeeStep = this.byId("typeEmployeeStep");
+        var employeeSteptype = this.byId("employeeSteptype");
 
         //Se obtiene el tipo seleccionado con el "CustomData"
         var button = oEvent.getSource();
         var typeEmployee = button.data("typeEmployee");
 
-        //Dependiendo del tipo, el salario bruto por defecto es:
-        // Interno: 24000
-        // autonomo : 400
-        // Gerente : 70000
+        //Dependiendo del tipo, el salario bruto por defecto 
         var Salary, Type;
         switch (typeEmployee) {
             case "interno":
@@ -62,17 +56,17 @@ sap.ui.define([
         });
 
         //Se comprueba si se está en el paso 1, ya que se debe usar la función "nextStep" para activar el paso 2.
-        if (this._wizard.getCurrentStep() === typeEmployeeStep.getId()) {
+        if (this._wizard.getCurrentStep() === employeeSteptype.getId()) {
             this._wizard.nextStep();
         } else {
             // En caso de que ya se encuentre activo el paso 2, se navega directamente a este paso 
-            this._wizard.goToStep(dataEmployeeStep);
+            this._wizard.goToStep(datosEmployeeStep);
         }
     }
 
     //Función para validar el dni
     function validateDNI(oEvent) {
-        //Se comprueba si es dni o cif. En caso de dni, se comprueba su valor. Para ello se comprueba que el tipo no sea "autonomo"
+        //Se comprueba si es dni o cif. En caso de dni, se comprueba su valor. Para ello se comprueba que el tipo no sea "autonomo" se mostrar CIF
         if (this._model.getProperty("_type") !== "autonomo") {
             var dni = oEvent.getParameter("value");
             if (Fn.validaRut(dni)) {
@@ -174,9 +168,9 @@ sap.ui.define([
         }
 
         if (isValid) {
-            this._wizard.validateStep(this.byId("dataEmployeeStep"));
+            this._wizard.validateStep(this.byId("datosEmployeeStep"));
         } else {
-            this._wizard.invalidateStep(this.byId("dataEmployeeStep"));
+            this._wizard.invalidateStep(this.byId("datosEmployeeStep"));
         }
         //Si hay callback se devuelve el valor isValid
         if (callback) {
@@ -191,7 +185,7 @@ sap.ui.define([
             if (isValid) {
                 //Se navega a la página review
                 var wizardNavContainer = this.byId("wizardNavContainer");
-                wizardNavContainer.to(this.byId("ReviewPage"));
+                wizardNavContainer.to(this.byId("RevisionPage"));
                 //Se obtiene los archivos subidos
                 var uploadCollection = this.byId("UploadCollection");
                 var files = uploadCollection.getItems();
@@ -207,7 +201,7 @@ sap.ui.define([
                     this._model.setProperty("/_files", []);
                 }
             } else {
-                this._wizard.goToStep(this.byId("dataEmployeeStep"));
+                this._wizard.goToStep(this.byId("datosEmployeeStep"));
             }
         }.bind(this));
     }
@@ -229,12 +223,12 @@ sap.ui.define([
 
     //Función al darle al botón editar de la sección "Tipo de empleado"
     function editStepOne() {
-        _editStep.bind(this)("typeEmployeeStep");
+        _editStep.bind(this)("employeeSteptype");
     }
 
     //Función al darle al botón editar de la sección "Datos de empleado"
     function editStepTwo() {
-        _editStep.bind(this)("dataEmployeeStep");
+        _editStep.bind(this)("datosEmployeeStep");
     }
 
     //Función al darle al botón editar de la sección "Información adicional"
