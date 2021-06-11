@@ -59,7 +59,7 @@ sap.ui.define([
         if (this._wizard.getCurrentStep() === employeeSteptype.getId()) {
             this._wizard.nextStep();
         } else {
-            // En caso de que ya se encuentre activo el paso 2, se navega directamente a este paso 
+           
             this._wizard.goToStep(datosEmployeeStep);
         }
     }
@@ -129,13 +129,12 @@ sap.ui.define([
         }
     }
 
-    //Función para validar los datos del nuevo empleado y poder pasar al paso 3
-    //callback : función que se pasa como parametro desde la función que se llama.
-    //Esto servirá para que en la funcion "wizardCompletedHandler" se devuelva el valor "isValid"
+    //Funcion que valida y tambien cuando se vuelve atras
+
     function employeeValidationData(oEvent, callback) {
         var object = this._model.getData();
         var isValid = true;
-        //Nombre
+     
         if (!object.FirstName) {
             object._FirstNameState = "Error";
             isValid = false;
@@ -143,7 +142,6 @@ sap.ui.define([
             object._FirstNameState = "None";
         }
 
-        //Apellidos
         if (!object.LastName) {
             object._LastNameState = "Error";
             isValid = false;
@@ -151,7 +149,7 @@ sap.ui.define([
             object._LastNameState = "None";
         }
 
-        //Fecha
+       
         if (!object.CreationDate) {
             object._CreationDateState = "Error";
             isValid = false;
@@ -159,7 +157,6 @@ sap.ui.define([
             object._CreationDateState = "None";
         }
 
-        //DNI
         if (!object.Dni) {
             object._RutState = "Error";
             isValid = false;
@@ -172,21 +169,21 @@ sap.ui.define([
         } else {
             this._wizard.invalidateStep(this.byId("datosEmployeeStep"));
         }
-        //Si hay callback se devuelve el valor isValid
+        //Si vuelven atras
         if (callback) {
             callback(isValid);
         }
     }
 
-    //Función al dar al botón verificar
+    //verifica los errores enpulsar wizard
     function wizardCompletedHandler(oEvent) {
-        //Se comprueba que no haya error
+        //para los error
         this.employeeValidationData(oEvent, function (isValid) {
             if (isValid) {
-                //Se navega a la página review
+             
                 var wizardNavContainer = this.byId("wizardNavContainer");
                 wizardNavContainer.to(this.byId("RevisionPage"));
-                //Se obtiene los archivos subidos
+               
                 var uploadCollection = this.byId("UploadCollection");
                 var files = uploadCollection.getItems();
                 var numFiles = uploadCollection.getItems().length;
@@ -206,14 +203,12 @@ sap.ui.define([
         }.bind(this));
     }
 
-    //Función generica para editar un step
+    //funcion generica para editar un step
     function _editStep(step) {
         var wizardNavContainer = this.byId("wizardNavContainer");
-        //Se añade un función al evento afterNavigate, ya que se necesita 
-        //que la función se ejecute una vez ya se haya navegado a la vista principal
         var fnAfterNavigate = function () {
             this._wizard.goToStep(this.byId(step));
-            //Se quita la función para que no vuelva a ejecutar al volver a nevagar
+         
             wizardNavContainer.detachAfterNavigate(fnAfterNavigate);
         }.bind(this);
 
@@ -221,22 +216,22 @@ sap.ui.define([
         wizardNavContainer.back();
     }
 
-    //Función al darle al botón editar de la sección "Tipo de empleado"
+    //al presionar edita Tipo de empleado
     function editStepOne() {
         _editStep.bind(this)("employeeSteptype");
     }
 
-    //Función al darle al botón editar de la sección "Datos de empleado"
+    //al presionar edita Datos de emplead
     function editStepTwo() {
         _editStep.bind(this)("datosEmployeeStep");
     }
 
-    //Función al darle al botón editar de la sección "Información adicional"
+    //al presionar editar Información adicional
     function editStepThree() {
         _editStep.bind(this)("OptionalInfoStep");
     }
 
-    //Función para guardar el nuevo empleado
+    //guarda el nuevo empleado
     function onSaveEmployee() {
         var json = this.getView().getModel().getData();
         var body = {};
@@ -256,21 +251,16 @@ sap.ui.define([
         this.getView().getModel("odataModel").create("/Users", body, {
             success: function (data) {
                 this.getView().setBusy(false);
-                //Se almacena el nuevo usuario
+            
                 this.newUser = data.EmployeeId;
                 sap.m.MessageBox.information(this.oView.getModel("i18n").getResourceBundle().getText("empleadoNuevo") + ": " + this.newUser, {
                     onClose: function () {
-                        //Se vuelve al wizard, para que al vovler a entrar a la aplicacion aparezca ahi
                         var wizardNavContainer = this.byId("wizardNavContainer");
                         wizardNavContainer.back();
-                        //Regresamos al menú principal
-                        //Se obtiene el conjuntos de routers del programa
                         var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-                        //Se navega hacia el router "menu"
                         oRouter.navTo("menu", {}, true);
                     }.bind(this)
                 });
-                //Se llama a la función "upload" del uploadCollection
                 this.onStartUpload();
             }.bind(this),
             error: function () {
@@ -279,16 +269,13 @@ sap.ui.define([
         });
     }
 
-    //Función al cancelar la creación
+    //cancelar la creación
     function onCancel() {
-        //Se muestra un mensaje de confirmación
+      
         sap.m.MessageBox.confirm(this.oView.getModel("i18n").getResourceBundle().getText("preguntaCancelar"), {
             onClose: function (oAction) {
                 if (oAction === "OK") {
-                    //Regresamos al menú principal
-                    //Se obtiene el conjuntos de routers del programa
                     var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-                    //Se navega hacia el router "menu"
                     oRouter.navTo("menu", {}, true);
                 }
             }.bind(this)
@@ -296,12 +283,9 @@ sap.ui.define([
 
     }
 
-    //Función que se ejecuta al cargar un fichero en el uploadCollection
-    //Se agrega el parametro de cabecera x-csrf-token con el valor del token del modelo
-    //Es necesario para validarse contra sap
+    //genera cabecera para el envio al servicio odata con autentificacio para sap 
     function onChange(oEvent) {
         var oUploadCollection = oEvent.getSource();
-        // Header Token
         var oCustomerHeaderToken = new sap.m.UploadCollectionParameter({
             name: "x-csrf-token",
             value: this.getView().getModel("odataModel").getSecurityToken()
@@ -309,8 +293,7 @@ sap.ui.define([
         oUploadCollection.addHeaderParameter(oCustomerHeaderToken);
     }
 
-    //Función que se ejecuta por cada fichero que se va a subir a sap
-    //Se debe agregar el parametro de cabecera "slug" con el valor "id de sap del alumno",id del nuevo usuario y nombre del fichero, separados por ;
+    //se suben los parametros slug para el servicio odata 
     function onBeforeUploadStart(oEvent) {
         var oCustomerHeaderSlug = new UploadCollectionParameter({
             name: "slug",
@@ -325,6 +308,7 @@ sap.ui.define([
         oUploadCollection.upload();
     }
 
+    //se ingresan todas las funciones del controlador para que sean visibles CreateEmployee
     return Controller.extend("Empleados.RecursoHumano.controller.CreateEmployee", {
         onBeforeRendering: onBeforeRendering,
         toStepButton: toStepButton,

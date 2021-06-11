@@ -8,9 +8,9 @@ sap.ui.define([
 		this._splitAppEmployee = this.byId("splitAppEmployee");
 	}
 	
-	//Función al pulsar "<" para regresar al menú
+	//vuelve al menu
 	function pressBack(){
-			// vamos al menu
+
 			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 			oRouter.navTo("menu", {}, true);
 	}
