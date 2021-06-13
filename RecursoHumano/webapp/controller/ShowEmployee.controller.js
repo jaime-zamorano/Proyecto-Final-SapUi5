@@ -17,34 +17,36 @@ sap.ui.define([
 	
 	//Función para filtrar empleados
 	function searchEmployee(){
-		
+     var NameEmployee = this.byId("nameEmployee");
+     var context = this.getView().getModel("odataModel").getData()
+     
 	}
 	
-	//Función al seleccionar un empleado
+	//seleccionar un empleado
 	function selectEmployee(oEvent){
-		//Se navega al detalle del empleado
+		
 		this._splitAppEmployee.to(this.createId("detailEmployee"));
 		var context = oEvent.getParameter("listItem").getBindingContext("odataModel");
-		//Se almacena el usuario seleccionado
+		
 		this.employeeId = context.getProperty("EmployeeId");
 		var detailEmployee = this.byId("detailEmployee");
-		//Se bindea a la vista con la entidad Users y las claves del id del empleado y el id del alumno
+
 		detailEmployee.bindElement("odataModel>/Users(EmployeeId='"+ this.employeeId +"',SapId='"+this.getOwnerComponent().SapId+"')");
 		
 	}
 	
-	//Función para eliminar el empleado seleccionado
+	//eliminar el empleado seleccionado
 	function deleteEmployee(oEvent){
-		//Se muestra un mensaje de confirmación
+	
 		sap.m.MessageBox.confirm(this.getView().getModel("i18n").getResourceBundle().getText("seguroEliminar"),{
 			title : this.getView().getModel("i18n").getResourceBundle().getText("confirm"),
 			onClose : function(oAction){
 			    	if(oAction === "OK"){
-			    		//Se llama a la función remove
+			    		
 						this.getView().getModel("odataModel").remove("/Users(EmployeeId='" + this.employeeId + "',SapId='"+this.getOwnerComponent().SapId+"')",{
 							success : function(data){
 								sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("eliminadoUsuario"));
-								//En el detalle se muestra el mensaje "Seleecione empleado"
+							
 								this._splitAppEmployee.to(this.createId("detailSelectEmployee"));
 							}.bind(this),
 							error : function(e){
@@ -66,18 +68,17 @@ sap.ui.define([
 		this.ascendDialog.open();
 	}
 	
-	//Función para cerrar el dialogo
+	//cerrar el dialogo
 	function onCloseAscendDialog(){
 		this.ascendDialog.close();
 	}
 	
-	//Función para crear un nuevo ascenso
+	//se crea un nuevo ascenso
 	function addAscend(oEvent){
-		//Se obtiene el modelo newAscend
+	
 		var newAscend = this.ascendDialog.getModel("newAscend");
-		//Se obtiene los datos
+
 		var odata = newAscend.getData();
-		//Se prepara la informacion para enviar a sap y se agrega el campo sapId con el id del alumno y el id del empleado
 		var body = {
 			Ammount : odata.Ammount,
 			CreationDate : odata.CreationDate,
@@ -100,9 +101,7 @@ sap.ui.define([
 		
     }
     
-    //Función que se ejecuta al cargar un fichero en el uploadCollection
-	//Se agrega el parametro de cabecera x-csrf-token con el valor del token del modelo
-	//Es necesario para validarse contra sap
+    //genera cabecera para el envio al servicio odata con autentificacio para sap 
 	function onChange (oEvent) {
 	   var oUploadCollection = oEvent.getSource();
 	   // Header Token
@@ -112,9 +111,8 @@ sap.ui.define([
 	   });
 	   oUploadCollection.addHeaderParameter(oCustomerHeaderToken);
 	 }
-	
-	//Función que se ejecuta por cada fichero que se va a subir a sap
-	//Se debe agregar el parametro de cabecera "slug" con el valor "id de sap del alumno",id del nuevo usuario y nombre del fichero, separados por ;
+    
+   //se suben los parametros slug para el servicio odata 
 	 function onBeforeUploadStart (oEvent) {
 	   var oCustomerHeaderSlug = new sap.m.UploadCollectionParameter({
 				name: "slug",
